@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Streaming</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 20px;
+            color: #333;
+        }
+        #video-container {
+            width: 60%; /* Fixed container width */
+            height: 400px; /* Fixed container height */
+            margin: 20px auto;
+            border: 3px solid #ddd;
+            border-radius: 8px;
+            background-color: #000; /* Black background to simulate a video frame */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        #video {
+            max-width: 100%;
+            max-height: 100%;
+            display: none; /* Initially hidden */
+        }
+        #placeholder {
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Video Streaming with Face and Hand Detection</h1>
+
+    <!-- Video Container -->
+    <div id="video-container">
+        <img id="video" src="" alt="Live Video Feed">
+        <div id="placeholder">Waiting for video stream...</div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-container">
+        <form id="start-stream-form" method="POST" action="/start_stream" style="display: inline;">
+            <button type="button" id="start-button">Start Stream</button>
+        </form>
+        <form id="stop-stream-form" method="POST" action="/stop_stream" style="display: inline;">
+            <button type="button" id="stop-button">Stop Stream</button>
+        </form>
+    </div>
+
+    <script>
+        const startButton = document.getElementById("start-button");
+        const stopButton = document.getElementById("stop-button");
+        const video = document.getElementById("video");
+        const placeholder = document.getElementById("placeholder");
+
+        // Start Stream
+        startButton.addEventListener("click", () => {
+            fetch("/start_stream", { method: "POST" })
+                .then(response => {
+                    if (response.ok) {
+                        video.src = "/video_feed"; // Set the video feed URL
+                        video.style.display = "block"; // Show the video
+                        placeholder.style.display = "none"; // Hide placeholder
+                    } else {
+                        alert("Failed to start the stream.");
+                    }
+                })
+                .catch(error => console.error("Error starting stream:", error));
+        });
+
+        // Stop Stream
+        stopButton.addEventListener("click", () => {
+            fetch("/stop_stream", { method: "POST" })
+                .then(() => {
+                    video.src = ""; // Stop the video feed
+                    video.style.display = "none"; // Hide the video
+                    placeholder.style.display = "flex"; // Show placeholder
+                })
+                .catch(error => console.error("Error stopping stream:", error));
+        });
+    </script>
+</body>
+</html>
